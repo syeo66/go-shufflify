@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
+	"text/template"
 )
 
 func main() {
@@ -21,13 +21,18 @@ func main() {
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
-
 }
 
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("got / request\n")
-	_, err := io.WriteString(w, "This is my website!\n")
+
+	t, err := template.ParseFiles("templates/index.html")
 	if err != nil {
-		fmt.Printf("error writing response: %s\n", err)
+		fmt.Printf("error parsing template: %s\n", err)
+	}
+
+	err = t.Execute(w, "")
+	if err != nil {
+		fmt.Printf("error executing template: %s\n", err)
 	}
 }
