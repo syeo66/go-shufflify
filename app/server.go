@@ -3,10 +3,13 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"net/http"
 	"os"
 	"text/template"
 )
+
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func main() {
 	tmpl := make(map[string]*template.Template)

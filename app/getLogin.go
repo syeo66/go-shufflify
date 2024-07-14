@@ -9,7 +9,6 @@ import (
 
 func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("%v+\n", r)
 		fmt.Printf("%s /login\n", r.Method)
 
 		state := generateRandomString(16)
