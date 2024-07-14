@@ -9,7 +9,7 @@
 
   <style>
     :root {
-      --primary-color: #0070f3;
+      --primary-color: #58641D;
       --background-color: #333;
       --primary-text-color: #f0f0f0;
       font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
@@ -36,6 +36,24 @@
       gap: 0.5rem;
       padding: 1rem;
     }
+
+    header {
+      align-items: center;
+      background-color: var(--primary-color);
+      color: var(--primary-text-color);
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem;
+
+      a {
+        color: var(--primary-text-color);
+      }
+
+      h1 {
+        margin: 0;
+      }
+    }
+
 
     .player {
       background-color: var(--background-color);
@@ -77,7 +95,12 @@
       width: 100%;
     }
 
-    button {
+    a {
+      color: var(--primary-color);
+    }
+
+    button,
+    btn {
       background-color: var(--primary-color);
       border-radius: 0.25rem;
       border: 0 transparent none;
@@ -94,6 +117,12 @@
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
 
+  {{block "header" .}}
+  <header>
+    <h1>Go Shufflify</h1>
+    {{block "logout" .}}{{end}}
+  </header>
+  {{end}}
   {{block "body" .}}<main>No template found</main>{{end}}
 </body>
 

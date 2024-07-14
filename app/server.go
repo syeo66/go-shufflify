@@ -18,6 +18,7 @@ func main() {
 
 	http.HandleFunc("/", getRoot(tmpl))
 	http.HandleFunc("/login", getLogin(tmpl))
+	http.HandleFunc("/logout", getLogout)
 	http.HandleFunc("/callback", getCallback)
 
 	fmt.Printf("starting server port 3333\n")
