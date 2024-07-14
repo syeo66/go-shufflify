@@ -12,6 +12,8 @@ import (
 var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 func main() {
+	port := getEnv("PORT", "3333")
+
 	tmpl := make(map[string]*template.Template)
 	tmpl["index.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/index.html", "templates/player.html"))
 	tmpl["login.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/login.html"))
@@ -21,9 +23,9 @@ func main() {
 	http.HandleFunc("/logout", getLogout)
 	http.HandleFunc("/callback", getCallback)
 
-	fmt.Printf("starting server port 3333\n")
-	fmt.Printf("open http://localhost:3333/\n")
-	err := http.ListenAndServe(":3333", nil)
+	fmt.Printf("starting server port %s\n", port)
+	fmt.Printf("open http://localhost:%s/\n", port)
+	err := http.ListenAndServe(":"+port, nil)
 
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
