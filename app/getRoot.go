@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"reflect"
 )
 
 func getRoot(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
@@ -22,9 +21,14 @@ func getRoot(tmpl map[string]*template.Template) func(http.ResponseWriter, *http
 		page := Page{}
 
 		userData := session.Values["user"]
+
+		if userData == nil {
+			http.Redirect(w, r, "/login", http.StatusFound)
+			return
+		}
+
 		user := &User{}
 		err := json.Unmarshal(userData.([]byte), user)
-
 		if err == nil {
 			page.User = *user
 		}
@@ -34,10 +38,4 @@ func getRoot(tmpl map[string]*template.Template) func(http.ResponseWriter, *http
 			fmt.Printf("error executing template: %s\n", err)
 		}
 	}
-}
-
-var fns = template.FuncMap{
-	"last": func(x int, a interface{}) bool {
-		return x == reflect.ValueOf(a).Len()-1
-	},
 }
