@@ -12,13 +12,28 @@ import (
 func getCallback(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 
+	session, _ := store.Get(r, "user-session")
+
 	requestURL := "https://accounts.spotify.com/api/token"
 	redirectURI := fmt.Sprintf("http://%s/callback", r.Host)
-	code := r.URL.Query().Get("code")
+
 	clientID := os.Getenv("SPOTIFY_CLIENT_ID")
 	clientSecret := os.Getenv("SPOTIFY_CLIENT_SECRET")
 
-	// TODO state check
+	code := r.URL.Query().Get("code")
+	state := r.URL.Query().Get("state")
+
+	if session.Values["state"] != state {
+		session.Values["state"] = ""
+		err := session.Save(r, w)
+		if err != nil {
+			fmt.Printf("error saving session: %s\n", err)
+			return
+		}
+
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
 
 	auth := clientID + ":" + clientSecret
 	auth = fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(auth)))

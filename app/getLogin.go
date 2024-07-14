@@ -11,7 +11,15 @@ func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *htt
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s /login\n", r.Method)
 
+		session, _ := store.Get(r, "user-session")
 		state := generateRandomString(16)
+		session.Values["state"] = state
+
+		err := session.Save(r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		if r.Method == "POST" {
 			spotifyUrl := fmt.Sprintf("https://accounts.spotify.com/authorize?client_id=%s&response_type=code&state=%s&redirect_uri=http://%s/callback&scope=%s", os.Getenv("SPOTIFY_CLIENT_ID"), state, r.Host, "user-read-private")
@@ -20,9 +28,9 @@ func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *htt
 			return
 		}
 
-		err := tmpl["login.html"].ExecuteTemplate(w, "base.html", nil)
+		err = tmpl["login.html"].ExecuteTemplate(w, "base.html", nil)
 		if err != nil {
-			fmt.Printf("error executing template: %s\n", err)
+			http.Error(w, "error executing template: login.html\n", http.StatusInternalServerError)
 		}
 	}
 }
