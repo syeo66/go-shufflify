@@ -27,3 +27,6 @@ tmp
 # prevent env files from being committed
 .env*
 .env
+
+# database
+*.db
