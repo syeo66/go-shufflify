@@ -85,7 +85,12 @@ func getCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			session.Values["user"] = user
+			jsonUser, _ := json.Marshal(user)
+			session.Values["user"] = jsonUser
+			err = session.Save(r, w)
+			if err != nil {
+				fmt.Printf("error saving session: %s\n", err)
+			}
 
 			http.Redirect(w, r, "/", http.StatusFound)
 			return

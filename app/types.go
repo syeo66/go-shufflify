@@ -16,3 +16,7 @@ type AccessToken struct {
 	AccessToken string `json:"access_token"`
 	Tcope       string `json:"scope"`
 }
+
+type Page struct {
+	User User
+}

@@ -5,5 +5,11 @@
 {{end}}
 
 {{define "logout"}}
-<a href="/logout">Logout</a>
+<div class="logout">
+  {{with index .User.Images 0}}
+  <img src="{{.Url}}" />
+  {{end}}
+  </picture>
+  <a href="/logout">Logout</a>
+</div>
 {{end}}

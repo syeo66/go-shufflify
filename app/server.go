@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
 	"os"
-	"text/template"
 
 	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"

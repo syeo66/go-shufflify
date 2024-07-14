@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"os"
-	"text/template"
 )
 
 func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
