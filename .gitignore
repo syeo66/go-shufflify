@@ -23,3 +23,7 @@ go.work.sum
 
 # air
 tmp
+
+# prevent env files from being committed
+.env*
+.env
