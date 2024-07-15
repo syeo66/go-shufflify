@@ -1,6 +1,6 @@
 {{define "body"}}
 <main>
-  {{block "player" .Player}}Player{{end}}
+  <div hx-get="/player" hx-trigger="every 1s" hx-swap="morph:innerHTML">{{block "player" .Player}}Player{{end}}</div>
 </main>
 {{end}}
 

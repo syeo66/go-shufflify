@@ -1,5 +1,5 @@
 {{define "player"}}
-<div class="player">
+<div class="player" hx-get="/player">
   <div class="player__device">
     {{.Device.Name}}
   </div>
@@ -23,3 +23,5 @@
   </div>
 </div>
 {{end}}
+
+{{block "player" .}}{{end}}
