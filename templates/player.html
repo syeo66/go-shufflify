@@ -1,5 +1,6 @@
 {{define "player"}}
-<div class="player" hx-get="/player">
+{{if .}}
+<div class="player">
   <div class="player__device">
     {{.Device.Name}}
   </div>
@@ -22,6 +23,9 @@
     <progress value={{.ProgressMs}} max={{.Item.DurationMs}}></progress>
   </div>
 </div>
+{{else}}
+<div class="player">No active device found</div>
+{{end}}
 {{end}}
 
 {{block "player" .}}{{end}}

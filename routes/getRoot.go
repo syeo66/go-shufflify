@@ -2,13 +2,11 @@ package routes
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 
 	d "github.com/syeo66/go-shufflify/data"
-	"github.com/syeo66/go-shufflify/lib"
 	. "github.com/syeo66/go-shufflify/types"
 )
 
@@ -19,8 +17,6 @@ func GetRoot(
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 
-		session, _ := lib.Store.Get(r, "user-session")
-
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
@@ -28,20 +24,13 @@ func GetRoot(
 
 		page := Page{}
 
-		userData := session.Values["user"]
-
-		if userData == nil {
+		user, err := d.RetrieveSessionUser(r)
+		if err != nil {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
-
-		user := &User{}
-		err := json.Unmarshal(userData.([]byte), user)
-		if err == nil {
-			page.User = *user
-		}
-
-		token := d.RetrieveToken(user, db)
+		page.User = *user
+		token := d.RetrieveToken(user.Id, db)
 
 		queue, err := d.RetrieveQueue(token)
 		if err == nil && queue != nil {
@@ -50,12 +39,8 @@ func GetRoot(
 			fmt.Println(err)
 		}
 
-		player, err := d.RetrievePlayer(token)
-		if err == nil && player != nil {
-			page.Player = *player
-		} else {
-			fmt.Println(err)
-		}
+		player, _ := d.RetrievePlayer(token)
+		page.Player = player
 
 		err = tmpl["index.html"].ExecuteTemplate(w, "base.html", page)
 		if err != nil {

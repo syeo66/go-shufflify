@@ -20,7 +20,7 @@ type AccessToken struct {
 type Page struct {
 	User   User
 	Queue  Queue
-	Player Player
+	Player *Player
 }
 
 type Artist struct {
@@ -57,10 +57,10 @@ type Device struct {
 }
 
 type Player struct {
-	Device       Device `json:"device"`
-	RepeatState  string `json:"repeat_state"`
-	ShuffleState bool   `json:"shuffle_state"`
-	ProgressMs   int    `json:"progress_ms"`
-	IsPlaying    bool   `json:"is_playing"`
-	Item         Track  `json:"item"`
+	Device       *Device `json:"device"`
+	RepeatState  string  `json:"repeat_state"`
+	ShuffleState bool    `json:"shuffle_state"`
+	ProgressMs   int     `json:"progress_ms"`
+	IsPlaying    bool    `json:"is_playing"`
+	Item         Track   `json:"item"`
 }

@@ -2,46 +2,29 @@ package routes
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 
 	d "github.com/syeo66/go-shufflify/data"
-	"github.com/syeo66/go-shufflify/lib"
-	. "github.com/syeo66/go-shufflify/types"
 )
 
 func GetPlayer(tmpl map[string]*template.Template, db *sql.DB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
-		session, _ := lib.Store.Get(r, "user-session")
 
-		userData := session.Values["user"]
-
-		if userData == nil {
-			http.Redirect(w, r, "/login", http.StatusFound)
-			return
-		}
-
-		user := &User{}
-		err := json.Unmarshal(userData.([]byte), user)
+		user, err := d.RetrieveSessionUser(r)
 		if err != nil {
 			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
-		token := d.RetrieveToken(user, db)
-
-		player, err := d.RetrievePlayer(token)
-
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		token := d.RetrieveToken(user.Id, db)
+		player, _ := d.RetrievePlayer(token)
 
 		err = tmpl["player.html"].ExecuteTemplate(w, "player.html", player)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println(err)
 		}
 	}
 }
