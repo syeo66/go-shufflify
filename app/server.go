@@ -23,6 +23,11 @@ func main() {
 	tmpl["index.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/index.html", "templates/player.html"))
 	tmpl["login.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/login.html"))
 
+	cssfs := http.FileServer(http.Dir("./css"))
+	http.Handle("/css/", http.StripPrefix("/css/", cssfs))
+	jsfs := http.FileServer(http.Dir("./js"))
+	http.Handle("/js/", http.StripPrefix("/js/", jsfs))
+
 	http.HandleFunc("/", getRoot(tmpl, db))
 	http.HandleFunc("/login", getLogin(tmpl))
 	http.HandleFunc("/logout", getLogout)

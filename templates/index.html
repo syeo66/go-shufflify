@@ -5,7 +5,7 @@
 {{end}}
 
 {{define "logout"}}
-<div class="logout">
+<div class="logout" hx-boost="true">
   {{with index .User.Images 0}}
   <img src="{{.Url}}" />
   {{end}}
