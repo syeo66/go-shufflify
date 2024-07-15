@@ -13,9 +13,9 @@ import (
 )
 
 // TOOD
+// - implement a token refresh mechanism
 // - introduce queue manager (go routine)
 // - prevent queue manager and frontend from fetching the same data twice
-// - implement a token refresh mechanism
 
 func main() {
 	port := lib.GetEnv("PORT", "3333")
