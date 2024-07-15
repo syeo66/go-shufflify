@@ -21,8 +21,9 @@ func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *htt
 			return
 		}
 
+		scope := "user-read-private user-read-currently-playing user-read-playback-state user-read-playback-state"
 		if r.Method == "POST" {
-			spotifyUrl := fmt.Sprintf("https://accounts.spotify.com/authorize?client_id=%s&response_type=code&state=%s&redirect_uri=http://%s/callback&scope=%s", os.Getenv("SPOTIFY_CLIENT_ID"), state, r.Host, "user-read-private")
+			spotifyUrl := fmt.Sprintf("https://accounts.spotify.com/authorize?client_id=%s&response_type=code&state=%s&redirect_uri=http://%s/callback&scope=%s", os.Getenv("SPOTIFY_CLIENT_ID"), state, r.Host, scope)
 
 			http.Redirect(w, r, spotifyUrl, http.StatusFound)
 			return

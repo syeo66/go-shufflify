@@ -77,6 +77,17 @@
       grid-template-columns: clamp(50px, 25%, 200px) 1fr;
       grid-template-rows: 1fr max-content;
       padding: 1rem;
+      position: relative;
+    }
+
+    .player__device {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      border: 1px solid var(--primary-text-color);
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border-radius: 0.25rem;
     }
 
     .player__cover {
@@ -94,10 +105,16 @@
 
     .player__progress {
       grid-area: progress;
+
+      progress {
+        width: 100%;
+      }
     }
 
-    .player__progress progress {
-      width: 100%;
+    .player__artist {
+      span:not(:first-child)::before {
+        content: ", ";
+      }
     }
 
     .login {

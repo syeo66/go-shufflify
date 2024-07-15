@@ -17,7 +17,7 @@ func initDb() *sql.DB {
 	}
 
 	sqlStmt := `
-	CREATE TABLE IF NOT EXISTS users (id text not null primary key, token text);
+	CREATE TABLE IF NOT EXISTS users (id text not null primary key, token text, isActive bool, activeUntil datetime);
 	`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

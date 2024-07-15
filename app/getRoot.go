@@ -1,13 +1,17 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 )
 
-func getRoot(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
+func getRoot(
+	tmpl map[string]*template.Template,
+	db *sql.DB,
+) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 
@@ -31,6 +35,22 @@ func getRoot(tmpl map[string]*template.Template) func(http.ResponseWriter, *http
 		err := json.Unmarshal(userData.([]byte), user)
 		if err == nil {
 			page.User = *user
+		}
+
+		token := retrieveToken(user, db)
+
+		queue, err := retrieveQueue(token)
+		if err == nil && queue != nil {
+			page.Queue = *queue
+		} else {
+			fmt.Println(err)
+		}
+
+		player, err := retrievePlayer(token)
+		if err == nil && player != nil {
+			page.Player = *player
+		} else {
+			fmt.Println(err)
 		}
 
 		err = tmpl["index.html"].ExecuteTemplate(w, "base.html", page)
