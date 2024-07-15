@@ -7,20 +7,19 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/syeo66/go-shufflify/lib"
+	"github.com/syeo66/go-shufflify/routes"
 )
-
-var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 // TOOD
 // - introduce queue manager (go routine)
 // - prevent queue manager and frontend from fetching the same data twice
 
 func main() {
-	port := getEnv("PORT", "3333")
+	port := lib.GetEnv("PORT", "3333")
 
-	db := initDb()
+	db := lib.InitDb()
 	defer db.Close()
 
 	tmpl := make(map[string]*template.Template)
@@ -35,12 +34,12 @@ func main() {
 	jsfs := http.FileServer(http.Dir("./js"))
 	http.Handle("/js/", http.StripPrefix("/js/", jsfs))
 
-	http.HandleFunc("/", getRoot(tmpl, db))
-	http.HandleFunc("/callback", getCallback(db))
-	http.HandleFunc("/login", getLogin(tmpl))
-	http.HandleFunc("/logout", getLogout)
-	http.HandleFunc("/player", getPlayer(tmpl, db))
-	http.HandleFunc("/queue", getQueue(tmpl, db))
+	http.HandleFunc("/", routes.GetRoot(tmpl, db))
+	http.HandleFunc("/callback", routes.GetCallback(db))
+	http.HandleFunc("/login", routes.GetLogin(tmpl))
+	http.HandleFunc("/logout", routes.GetLogout)
+	http.HandleFunc("/player", routes.GetPlayer(tmpl, db))
+	http.HandleFunc("/queue", routes.GetQueue(tmpl, db))
 
 	fmt.Printf("starting server port %s\n", port)
 	fmt.Printf("open http://localhost:%s/\n", port)

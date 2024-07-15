@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	"encoding/json"
@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	. "github.com/syeo66/go-shufflify/types"
 )
 
-func retrievePlayer(token string) (*Player, error) {
+func RetrievePlayer(token string) (*Player, error) {
 	client := &http.Client{}
 	requestURL := "https://api.spotify.com/v1/me/player"
 	req, _ := http.NewRequest(http.MethodGet, requestURL, nil)

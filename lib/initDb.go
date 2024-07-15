@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"database/sql"
@@ -6,8 +6,8 @@ import (
 	"log"
 )
 
-func initDb() *sql.DB {
-	dbFileName := getEnv("DB_FILE", "./shufflify.db")
+func InitDb() *sql.DB {
+	dbFileName := GetEnv("DB_FILE", "./shufflify.db")
 
 	fmt.Printf("db file: %s\n", dbFileName)
 

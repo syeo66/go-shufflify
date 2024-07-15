@@ -1,4 +1,4 @@
-package main
+package routes
 
 import (
 	"database/sql"
@@ -6,12 +6,16 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+
+	d "github.com/syeo66/go-shufflify/data"
+	"github.com/syeo66/go-shufflify/lib"
+	. "github.com/syeo66/go-shufflify/types"
 )
 
-func getQueue(tmpl map[string]*template.Template, db *sql.DB) func(http.ResponseWriter, *http.Request) {
+func GetPlayer(tmpl map[string]*template.Template, db *sql.DB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
-		session, _ := store.Get(r, "user-session")
+		session, _ := lib.Store.Get(r, "user-session")
 
 		userData := session.Values["user"]
 
@@ -27,15 +31,15 @@ func getQueue(tmpl map[string]*template.Template, db *sql.DB) func(http.Response
 			return
 		}
 
-		token := retrieveToken(user, db)
+		token := d.RetrieveToken(user, db)
 
-		queue, err := retrieveQueue(token)
+		player, err := d.RetrievePlayer(token)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		err = tmpl["queue.html"].ExecuteTemplate(w, "queue.html", queue)
+		err = tmpl["player.html"].ExecuteTemplate(w, "player.html", player)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

@@ -1,11 +1,11 @@
-package main
+package lib
 
 import (
 	"crypto/rand"
 	"fmt"
 )
 
-func generateRandomString(length int) string {
+func GenerateRandomString(length int) string {
 	b := make([]byte, length)
 	_, err := rand.Read(b)
 	if err != nil {

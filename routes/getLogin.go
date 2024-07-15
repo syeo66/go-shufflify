@@ -1,18 +1,20 @@
-package main
+package routes
 
 import (
 	"fmt"
 	"html/template"
 	"net/http"
 	"os"
+
+	"github.com/syeo66/go-shufflify/lib"
 )
 
-func getLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
+func GetLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s /login\n", r.Method)
 
-		session, _ := store.Get(r, "user-session")
-		state := generateRandomString(16)
+		session, _ := lib.Store.Get(r, "user-session")
+		state := lib.GenerateRandomString(16)
 		session.Values["state"] = state
 
 		err := session.Save(r, w)

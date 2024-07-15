@@ -1,8 +1,11 @@
-package main
+package data
 
-import "database/sql"
+import (
+	"database/sql"
+	. "github.com/syeo66/go-shufflify/types"
+)
 
-func retrieveToken(user *User, db *sql.DB) string {
+func RetrieveToken(user *User, db *sql.DB) string {
 	id := user.Id
 
 	stmt, err := db.Prepare("select token from users where id = ?")

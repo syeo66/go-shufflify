@@ -1,4 +1,4 @@
-package main
+package routes
 
 import (
 	"database/sql"
@@ -12,13 +12,16 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
+	d "github.com/syeo66/go-shufflify/data"
+	"github.com/syeo66/go-shufflify/lib"
+	. "github.com/syeo66/go-shufflify/types"
 )
 
-func getCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
+func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("%s %s\n", r.Method, r.URL.Path)
 
-		session, _ := store.Get(r, "user-session")
+		session, _ := lib.Store.Get(r, "user-session")
 
 		redirectURI := fmt.Sprintf("http://%s/callback", r.Host)
 
@@ -73,7 +76,7 @@ func getCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			user, _ := retrieveUser(bodyData.AccessToken)
+			user, _ := d.RetrieveUser(bodyData.AccessToken)
 
 			sqlStmt := `
       REPLACE INTO users (id, token) VALUES (?, ?);
