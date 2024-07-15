@@ -1,0 +1,24 @@
+{{define "queue"}}
+<ul class="queue">
+  {{range .Queue}}
+  <li class="queue__item" id="{{.Id}}">
+    <div class="queue__item__cover">
+      <div>
+        {{with index .Album.Images 0}}
+        <img src={{.Url}} height={{.Height}} width={{.Width}} />
+        {{end}}
+      </div>
+    </div>
+    <div class="queue__item__info">
+      <div class="queue__item__name">{{.Name}}</div>
+      <div class="queue__item__album">{{.Album.Name}}</div>
+      <div class="queue__item__artist">
+        {{range .Artists}}<span>{{.Name}}</span>{{end}}
+      </div>
+    </div>
+  </li>
+  {{end}}
+</ul>
+{{end}}
+
+{{block "queue" .}}{{end}}
