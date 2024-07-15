@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 	d "github.com/syeo66/go-shufflify/data"
@@ -79,9 +80,16 @@ func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 			user, _ := d.RetrieveUser(bodyData.AccessToken)
 
 			sqlStmt := `
-      REPLACE INTO users (id, token) VALUES (?, ?);
+      REPLACE INTO users (id, token, refreshToken, expiry, isActive) VALUES (?, ?, ?, ?, 0);
       `
-			_, err = db.Exec(sqlStmt, user.Id, bodyData.AccessToken)
+			_, err = db.Exec(
+				sqlStmt,
+				user.Id,
+				bodyData.AccessToken,
+				bodyData.RefreshToken,
+				time.Now().Add(time.Second*time.Duration(bodyData.ExpiresIn)),
+			)
+
 			if err != nil {
 				fmt.Printf("error: %s\n", err)
 				http.Redirect(w, r, "/login", http.StatusFound)
