@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"os"
 	"time"
@@ -27,7 +26,7 @@ func main() {
 
 	worker(db)
 
-	tmpl := PrepareTemplates()
+	tmpl := lib.PrepareTemplates()
 
 	cssfs := http.FileServer(http.Dir("./css"))
 	http.Handle("/css/", http.StripPrefix("/css/", cssfs))
@@ -54,29 +53,6 @@ func main() {
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
-}
-
-func PrepareTemplates() map[string]*template.Template {
-	tmpl := make(map[string]*template.Template)
-
-	tmpl["index.html"] = template.Must(template.ParseFiles(
-		"templates/base.html",
-		"templates/index.html",
-		"templates/player.html",
-		"templates/queue.html",
-		"templates/tools.html",
-	))
-
-	tmpl["login.html"] = template.Must(template.ParseFiles(
-		"templates/base.html",
-		"templates/login.html",
-	))
-
-	tmpl["player.html"] = template.Must(template.ParseFiles("templates/player.html"))
-	tmpl["queue.html"] = template.Must(template.ParseFiles("templates/queue.html"))
-	tmpl["tools.html"] = template.Must(template.ParseFiles("templates/tools.html"))
-
-	return tmpl
 }
 
 func worker(db *sql.DB) {
