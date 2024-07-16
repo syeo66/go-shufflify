@@ -1,5 +1,6 @@
 :root {
   --primary-color: #58641D;
+  --secondary-color: hsl(from var(--primary-color) h 0 l);
   --background-color: #333;
   --primary-text-color: #f0f0f0;
   font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
@@ -165,7 +166,13 @@ a {
 
 button,
 btn {
-  background-color: var(--primary-color);
+  --button-color: var(--secondary-color);
+
+  &.primary {
+    --button-color: var(--primary-color);
+  }
+
+  background-color: var(--button-color);
   border-radius: 0.25rem;
   border: 0 transparent none;
   color: var(--primary-text-color);
@@ -174,4 +181,9 @@ btn {
   letter-spacing: 0.07em;
   outline-color: var(--primary-text-color);
   padding: 0.5rem 1rem;
+  transition: background-color 0.25s;
+
+  &:hover {
+    background-color: hsl(from var(--button-color) h s calc(l * 1.2));
+  }
 }

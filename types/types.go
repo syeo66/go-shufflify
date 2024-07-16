@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type Image struct {
 	Url    string `json:"url"`
 	Height int    `json:"height"`
@@ -20,9 +22,10 @@ type AccessToken struct {
 }
 
 type Page struct {
-	User   User
-	Queue  Queue
-	Player *Player
+	Configuration *Configuration
+	Player        *Player
+	Queue         Queue
+	User          User
 }
 
 type Artist struct {
@@ -65,4 +68,10 @@ type Player struct {
 	ProgressMs   int     `json:"progress_ms"`
 	IsPlaying    bool    `json:"is_playing"`
 	Item         Track   `json:"item"`
+}
+
+type Configuration struct {
+	UID         string     `json:"uid"`
+	ActiveUntil *time.Time `json:"activeUntil"`
+	IsActive    bool       `json:"isActive"`
 }

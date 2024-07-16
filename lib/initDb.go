@@ -17,7 +17,14 @@ func InitDb() *sql.DB {
 	}
 
 	sqlStmt := `
-	CREATE TABLE IF NOT EXISTS users (id text not null primary key, token text, refreshToken text, expiry datetime, isActive bool, activeUntil datetime);
+	CREATE TABLE IF NOT EXISTS users (
+    id text not null primary key,
+    token text,
+    refreshToken text,
+    expiry datetime,
+    isActive bool,
+    activeUntil datetime
+  );
 	`
 	_, err = db.Exec(sqlStmt)
 	if err != nil {

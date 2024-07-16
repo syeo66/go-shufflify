@@ -4,6 +4,10 @@
     {{block "player" .Player}}Player{{end}}
   </div>
 
+  <div>
+    {{block "tools" .Configuration}}Tools{{end}}
+  </div>
+
   <div hx-get="/queue" hx-trigger="every 5s" hx-swap="morph:innerHTML">
     {{block "queue" .Queue}}Queue{{end}}
   </div>

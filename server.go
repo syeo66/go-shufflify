@@ -1,13 +1,16 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+	d "github.com/syeo66/go-shufflify/data"
 	"github.com/syeo66/go-shufflify/lib"
 	"github.com/syeo66/go-shufflify/routes"
 )
@@ -22,11 +25,9 @@ func main() {
 	db := lib.InitDb()
 	defer db.Close()
 
-	tmpl := make(map[string]*template.Template)
-	tmpl["index.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/index.html", "templates/player.html", "templates/queue.html"))
-	tmpl["login.html"] = template.Must(template.ParseFiles("templates/base.html", "templates/login.html"))
-	tmpl["player.html"] = template.Must(template.ParseFiles("templates/player.html"))
-	tmpl["queue.html"] = template.Must(template.ParseFiles("templates/queue.html"))
+	worker(db)
+
+	tmpl := PrepareTemplates()
 
 	cssfs := http.FileServer(http.Dir("./css"))
 	http.Handle("/css/", http.StripPrefix("/css/", cssfs))
@@ -40,6 +41,7 @@ func main() {
 	http.HandleFunc("/logout", routes.GetLogout)
 	http.HandleFunc("/player", routes.GetPlayer(tmpl, db))
 	http.HandleFunc("/queue", routes.GetQueue(tmpl, db))
+	http.HandleFunc("/toggle-shuffle", routes.ToggleShuffle(tmpl, db))
 
 	fmt.Printf("starting server port %s\n", port)
 	fmt.Printf("open http://localhost:%s/\n", port)
@@ -52,4 +54,48 @@ func main() {
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
+}
+
+func PrepareTemplates() map[string]*template.Template {
+	tmpl := make(map[string]*template.Template)
+
+	tmpl["index.html"] = template.Must(template.ParseFiles(
+		"templates/base.html",
+		"templates/index.html",
+		"templates/player.html",
+		"templates/queue.html",
+		"templates/tools.html",
+	))
+
+	tmpl["login.html"] = template.Must(template.ParseFiles(
+		"templates/base.html",
+		"templates/login.html",
+	))
+
+	tmpl["player.html"] = template.Must(template.ParseFiles("templates/player.html"))
+	tmpl["queue.html"] = template.Must(template.ParseFiles("templates/queue.html"))
+	tmpl["tools.html"] = template.Must(template.ParseFiles("templates/tools.html"))
+
+	return tmpl
+}
+
+func worker(db *sql.DB) {
+	ticker := time.NewTicker(5 * time.Second)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				queueManager(db)
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+}
+
+func queueManager(db *sql.DB) {
+	users, _ := d.RetrieveActiveUsers(db)
+	fmt.Printf("%+v\n", users)
 }

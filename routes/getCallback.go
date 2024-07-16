@@ -78,9 +78,16 @@ func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 			}
 
 			user, _ := d.RetrieveUser(bodyData.AccessToken)
+			config, _ := d.RetrieveConfig(user.Id, db)
+
+			if config == nil {
+				config = &Configuration{
+					IsActive: false,
+				}
+			}
 
 			sqlStmt := `
-      REPLACE INTO users (id, token, refreshToken, expiry, isActive) VALUES (?, ?, ?, ?, 0);
+      REPLACE INTO users (id, token, refreshToken, expiry, isActive, activeUntil) VALUES (?, ?, ?, ?, ?, ?);
       `
 			_, err = db.Exec(
 				sqlStmt,
@@ -88,6 +95,8 @@ func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 				bodyData.AccessToken,
 				bodyData.RefreshToken,
 				time.Now().Add(time.Second*time.Duration(bodyData.ExpiresIn)),
+				config.IsActive,
+				config.ActiveUntil,
 			)
 
 			if err != nil {

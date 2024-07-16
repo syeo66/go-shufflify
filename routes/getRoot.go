@@ -42,6 +42,12 @@ func GetRoot(
 		player, _ := d.RetrievePlayer(token)
 		page.Player = player
 
+		configuration, err := d.RetrieveConfig(user.Id, db)
+		if err != nil {
+			fmt.Println(err)
+		}
+		page.Configuration = configuration
+
 		err = tmpl["index.html"].ExecuteTemplate(w, "base.html", page)
 		if err != nil {
 			fmt.Printf("error executing template: %s\n", err)
