@@ -21,7 +21,6 @@ func ToggleShuffle(tmpl map[string]*template.Template, db *sql.DB) func(http.Res
 		user, _ := d.RetrieveSessionUser(r)
 
 		if r.Method == "POST" {
-			fmt.Println("POST")
 			sqlStmt := `
       UPDATE users 
       SET IsActive = CASE IsActive
