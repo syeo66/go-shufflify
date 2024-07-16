@@ -18,8 +18,9 @@ import (
 )
 
 // TOOD
-// add IsActive timeout 24 hours
-// add manual timeout
+// - add IsActive timeout of 24 hours
+// - allow timeout to be set manually
+// - select playlists to be used
 
 func main() {
 	port := lib.GetEnv("PORT", "3333")
