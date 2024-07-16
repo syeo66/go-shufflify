@@ -1,6 +1,6 @@
-# Go-Shufflify
+# Go Shufflify
 
-Go-Shufflify is a web application that integrates with the Spotify API to provide a personalized music queue.
+"Go Shufflify" is a web application that integrates with the Spotify API to provide a personalized music queue.
 
 ## Features
 
