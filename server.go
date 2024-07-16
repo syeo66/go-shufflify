@@ -73,5 +73,18 @@ func worker(db *sql.DB) {
 
 func queueManager(db *sql.DB) {
 	users, _ := d.RetrieveActiveUsers(db)
-	fmt.Printf("%+v\n", users)
+
+	for _, uid := range users {
+		token := d.RetrieveToken(uid, db)
+		queue, _ := d.RetrieveQueue(token)
+
+		if queue.Queue == nil || len(queue.Queue) > 30 {
+			continue
+		}
+
+		favCount := d.RetrieveFavouriteCount(token, db)
+		fmt.Printf("favourites: %d\n", favCount)
+
+		fmt.Println("add to queue")
+	}
 }
