@@ -67,6 +67,9 @@ Start the server:
 
 Open your browser and navigate to `http://localhost:3333/`.
 
+### Disallowing new users
+To disallow new user signups, set `DiSALLOW_NEW_USERS` to `true` in the `.env` file.
+
 ## Usage
 
 - **Login**: Navigate to `/login` and log in with your Spotify account.

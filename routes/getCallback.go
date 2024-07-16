@@ -80,29 +80,30 @@ func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 			user, _ := d.RetrieveUser(bodyData.AccessToken)
 			config, _ := d.RetrieveConfig(user.Id, db)
 
-			if config == nil {
-				config = &Configuration{
-					IsActive: false,
-				}
-			}
-
-			sqlStmt := `
-      REPLACE INTO users (id, token, refreshToken, expiry, isActive, activeUntil) VALUES (?, ?, ?, ?, ?, ?);
-      `
-			_, err = db.Exec(
-				sqlStmt,
-				user.Id,
-				bodyData.AccessToken,
-				bodyData.RefreshToken,
-				time.Now().Add(time.Second*time.Duration(bodyData.ExpiresIn)),
-				config.IsActive,
-				config.ActiveUntil,
-			)
-
-			if err != nil {
-				fmt.Printf("error: %s\n", err)
+			disallowNewUsers := os.Getenv("DISALLOW_NEW_USERS")
+			if config == nil && disallowNewUsers == "true" {
 				http.Redirect(w, r, "/login", http.StatusFound)
 				return
+			}
+
+			if config == nil {
+				sqlStmt := `
+      REPLACE INTO users (id, token, refreshToken, expiry, isActive) VALUES (?, ?, ?, ?, ?);
+      `
+				_, err = db.Exec(
+					sqlStmt,
+					user.Id,
+					bodyData.AccessToken,
+					bodyData.RefreshToken,
+					time.Now().Add(time.Second*time.Duration(bodyData.ExpiresIn)),
+					0,
+				)
+
+				if err != nil {
+					fmt.Printf("error: %s\n", err)
+					http.Redirect(w, r, "/login", http.StatusFound)
+					return
+				}
 			}
 
 			jsonUser, _ := json.Marshal(user)
