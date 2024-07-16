@@ -25,7 +25,9 @@ func GetLogin(tmpl map[string]*template.Template) func(http.ResponseWriter, *htt
 		}
 
 		scopes := []string{
+			"playlist-read-private",
 			"user-library-read",
+			"user-modify-playback-state",
 			"user-read-currently-playing",
 			"user-read-playback-state",
 			"user-read-private",

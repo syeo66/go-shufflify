@@ -42,6 +42,7 @@ type Album struct {
 
 type Track struct {
 	Id         string   `json:"id"`
+	Uri        string   `json:"uri"`
 	Album      Album    `json:"album"`
 	Artists    []Artist `json:"artists"`
 	DurationMs int      `json:"duration_ms"`
@@ -74,4 +75,33 @@ type Configuration struct {
 	UID         string     `json:"uid"`
 	ActiveUntil *time.Time `json:"activeUntil"`
 	IsActive    bool       `json:"isActive"`
+}
+
+type SavedTrack struct {
+	AddedAt time.Time `json:"added_at"`
+	Track   Track     `json:"track"`
+}
+
+type SavedTracks struct {
+	Total int          `json:"total"`
+	Items []SavedTrack `json:"items"`
+}
+
+type PlaylistTracks struct {
+	Href  string `json:"href"`
+	Total int    `json:"total"`
+}
+
+type Playlist struct {
+	Id          string         `json:"id"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	Tracks      PlaylistTracks `json:"tracks"`
+}
+
+type Playlists struct {
+	Next     string     `json:"next"`
+	Previous string     `json:"previous"`
+	Total    int        `json:"total"`
+	Items    []Playlist `json:"items"`
 }

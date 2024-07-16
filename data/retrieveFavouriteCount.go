@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	. "github.com/syeo66/go-shufflify/types"
 )
 
 func RetrieveFavouriteCount(token string, db *sql.DB) int {
@@ -20,7 +22,7 @@ func RetrieveFavouriteCount(token string, db *sql.DB) int {
 	}
 	defer resp.Body.Close()
 
-	countObj := &Count{}
+	countObj := &SavedTracks{}
 	body, _ := io.ReadAll(resp.Body)
 	err = json.Unmarshal(body, countObj)
 
@@ -29,8 +31,4 @@ func RetrieveFavouriteCount(token string, db *sql.DB) int {
 	}
 
 	return countObj.Total
-}
-
-type Count struct {
-	Total int `json:"total"`
 }
