@@ -78,7 +78,7 @@ func queueManager(db *sql.DB) {
 		token := d.RetrieveToken(uid, db)
 		queue, _ := d.RetrieveQueue(token)
 
-		if queue.Queue == nil || len(queue.Queue) > 30 {
+		if queue.Queue == nil || len(queue.Queue) > 3 {
 			continue
 		}
 
