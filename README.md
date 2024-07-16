@@ -1,79 +1,98 @@
-# Go Shufflify
+# Go-Shufflify
 
-Go Shufflify is a web application built with Go, which interacts with the Spotify API to manage user queues, playback state, and player information. The app is designed to help users shuffle their Spotify playlists and manage their music experience in a more interactive way.
+Go-Shufflify is a web application that integrates with the Spotify API to provide a personalized music queue.
 
 ## Features
 
-- **User Authentication**: Secure user authentication using Spotify OAuth.
-- **Queue Management**: View and manage the current queue of tracks.
-- **Player State**: Display the current playing track, and player state including shuffle and repeat modes.
-- **Database Support**: Stores user data securely in a SQLite database.
-- **Session Management**: Maintains user sessions with Gorilla sessions.
+- **User Authentication**: Authenticate users via Spotify and manage sessions.
+- **Queue Management**: Automatically manages the music queue based on user preferences and active playlists.
+
+## Project Structure
+
+- `server.go`: Entry point for the application.
+- `types/`: Contains all the data structures used across the application.
+- `lib/`: Utility functions and common library code.
+- `data/`: Functions for interacting with the Spotify API and the database.
+- `routes/`: HTTP route handlers for various endpoints.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Go](https://golang.org/dl/)
-- [SQLite](https://www.sqlite.org/download.html)
-- Spotify Developer Account and an app setup on the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/)
+- [Go](https://golang.org/dl/) (1.16 or later)
+- Spotify Developer Account with Client ID and Client Secret
 
 ### Installation
 
 1. Clone the repository:
 
-    ```sh
-    git clone https://github.com/syeo66/go-shufflify.git
-    cd go-shufflify
-    ```
+```bash
+git clone https://github.com/yourusername/go-shufflify.git
+cd go-shufflify
+```
 
-2. Set up environment variables:
+2. Install the required Go packages:
 
-    Create a `.env` file in the root directory with the following content:
+```bash
+go mod tidy
+```
 
-    ```env
-    SPOTIFY_CLIENT_ID=your_spotify_client_id
-    SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-    SESSION_KEY=your_session_key
-    PORT=3333
-    DB_FILE=./shufflify.db
-    ```
+3. Set up your environment variables:
 
-3. Install dependencies:
+Create a `.env` file in the root directory with the following content:
 
-    ```sh
-    go mod tidy
-    ```
+```env
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+SESSION_KEY=your_session_key # A really (!) random key, use 'uuid' or anything else generating random strings
+PORT=3333
+DB_FILE=./shufflify.db
+```
 
-4. Run the application:
+4. Start the application
 
-    ```sh
-    go run server.go
-    ```
+```bash
+./start_server.sh
+```
 
-5. Open your browser and navigate to `http://localhost:3333`.
+This will create the `shufflify.db` file and set up the necessary tables.
 
-### Usage
+### Running the Application
 
-- **Login**: Click the login button to authenticate with your Spotify account.
-- **Queue**: View the current queue of tracks.
-- **Player**: View the current playing track and player state.
+Start the server:
+
+```bash
+./start_server.sh
+```
+
+Open your browser and navigate to `http://localhost:3333/`.
+
+## Usage
+
+- **Login**: Navigate to `/login` and log in with your Spotify account.
+- **Queue Management**: The application will automatically manage your music queue based on your preferences when 'Shuffle' is enabled.
 
 ## Contributing
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -am 'Add new feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Create a new Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature-branch`)
+3. Make your changes
+4. Commit your changes (`git commit -am 'Add new feature'`)
+5. Push to the branch (`git push origin feature-branch`)
+6. Create a new Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 
 - [Spotify Web API](https://developer.spotify.com/documentation/web-api/)
-- [Gorilla Sessions](https://github.com/gorilla/sessions)
-- [Mattn Go-SQLite3](https://github.com/mattn/go-sqlite3)
+- [gorilla/sessions](https://github.com/gorilla/sessions)
+- [Mattn/go-sqlite3](https://github.com/mattn/go-sqlite3)
+
+---
+
+Happy shuffling! 🎶
