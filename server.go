@@ -21,6 +21,7 @@ import (
 // - add IsActive timeout of 24 hours
 // - allow timeout to be set manually
 // - select playlists to be used
+// - add env variable to prevent adding new users
 
 func main() {
 	port := lib.GetEnv("PORT", "3333")
