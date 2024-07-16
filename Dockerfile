@@ -21,9 +21,12 @@ FROM build-stage AS run-test-stage
 RUN go test -v ./...
 
 # Deploy the application binary into a lean image
-FROM scratch AS build-release-stage
+FROM alpine AS build-release-stage
 
 WORKDIR /
+
+RUN apk --no-cache add --no-check-certificate ca-certificates \
+  && update-ca-certificates
 
 COPY --from=build-stage /server /server
 COPY --from=build-stage /app/templates /templates
