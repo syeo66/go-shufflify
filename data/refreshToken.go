@@ -52,15 +52,12 @@ func RefreshToken(uid string, refreshToken string, db *sql.DB) (string, error) {
 			return "", errors.Join(err, errors.New("error retrieving token"))
 		}
 
-		sqlStmt := `
-      REPLACE INTO users (id, token, refreshToken, expiry, isActive) VALUES (?, ?, ?, ?, 0);
-      `
+		sqlStmt := `UPDATE users SET token = ?, expires = ? WHERE id = ?`
 		_, err = db.Exec(
 			sqlStmt,
-			uid,
 			bodyData.AccessToken,
-			refreshToken,
 			time.Now().Add(time.Second*time.Duration(bodyData.ExpiresIn)),
+			uid,
 		)
 
 		if err != nil {
