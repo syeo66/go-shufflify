@@ -19,7 +19,7 @@
 
 ### Prerequisites
 
-- [Go](https://golang.org/dl/) (1.16 or later)
+- [Go](https://golang.org/dl/) (1.22.5 or later)
 - Spotify Developer Account with Client ID and Client Secret
 
 ### Installation
