@@ -75,6 +75,12 @@ To disallow new user signups, set `DiSALLOW_NEW_USERS` to `true` in the `.env` f
 - **Login**: Navigate to `/login` and log in with your Spotify account.
 - **Queue Management**: The application will automatically manage your music queue based on your preferences when 'Shuffle' is enabled.
 
+## Known Issues
+
+Currently the Spotify API returns always 20 items in the queue. If there are not 20 items it just repeats the same items until the 20 items are filled up. This makes it hard to determine the real amount of tracks in the queue. Thus the shuffle works best if you only play a track from a single before Go Shufflify takes over.
+
+See https://community.spotify.com/t5/Spotify-for-Developers/Spotify-Web-API-Queue-endpoint-needs-polish/td-p/5493505
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
