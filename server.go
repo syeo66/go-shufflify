@@ -18,7 +18,7 @@ import (
 )
 
 // TOOD
-// - add IsActive timeout of 24 hours
+// - add caching
 // - allow timeout to be set manually
 // - select playlists to be used
 
