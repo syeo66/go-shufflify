@@ -80,8 +80,9 @@ func queueManager(db *sql.DB) {
 	for _, uid := range users {
 		token := d.RetrieveToken(uid, db)
 		queue, _ := d.RetrieveQueue(token)
+		player, _ := d.RetrievePlayer(token)
 
-		if queue == nil || queue.Queue == nil || len(queue.Queue) > 3 {
+		if player == nil || queue == nil || queue.Queue == nil || len(queue.Queue) > 3 {
 			continue
 		}
 
