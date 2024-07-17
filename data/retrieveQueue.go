@@ -6,11 +6,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	. "github.com/syeo66/go-shufflify/types"
 )
 
 func RetrieveQueue(token string) (*Queue, error) {
+	key := "RetrieveQueue" + token
+
+	cachedQueue, found := cacheStore.Get(key)
+	if found {
+		return cachedQueue.(*Queue), nil
+	}
+
 	client := &http.Client{}
 	requestURL := "https://api.spotify.com/v1/me/player/queue"
 	req, _ := http.NewRequest(http.MethodGet, requestURL, nil)
@@ -46,6 +54,8 @@ func RetrieveQueue(token string) (*Queue, error) {
 	if err != nil {
 		return nil, errors.Join(err, errors.New("error retrieving user"))
 	}
+
+	cacheStore.Set(key, cleanQueue, 5*time.Second)
 
 	return cleanQueue, nil
 }

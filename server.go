@@ -18,7 +18,6 @@ import (
 )
 
 // TOOD
-// - add caching
 // - allow timeout to be set manually
 // - select playlists to be used
 
