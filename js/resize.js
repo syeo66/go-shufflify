@@ -20,4 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('resize', doResize)
   doResize()
+
+  setInterval(doResize, 5000)
 })
