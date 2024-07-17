@@ -26,7 +26,7 @@ func RetrieveQueue(token string) (*Queue, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Join(err, errors.New("error retrieving user"))
+		return nil, errors.Join(err, errors.New("error retrieving queue"))
 	}
 	defer resp.Body.Close()
 
@@ -39,20 +39,23 @@ func RetrieveQueue(token string) (*Queue, error) {
 		Queue:            []Track{},
 	}
 
-	// for some reason the spotify api returns the same track multiple times
-	// even if it is not in the queue only once.
+	seen := map[string]bool{}
+
+	// For some reason the spotify api returns the same track multiple times
+	// even if it is not in the queue only once. This makes the API to
+	// retreive the queue mostly useless.
+
 	// TODO remove this later when Spotify works properly (which might be never)
-	var prevId string
 	for _, track := range queue.Queue {
-		if prevId == track.Id {
+		if seen[track.Id] {
 			continue
 		}
 		cleanQueue.Queue = append(cleanQueue.Queue, track)
-		prevId = track.Id
+		seen[track.Id] = true
 	}
 
 	if err != nil {
-		return nil, errors.Join(err, errors.New("error retrieving user"))
+		return nil, errors.Join(err, errors.New("error retrieving queue"))
 	}
 
 	cacheStore.Set(key, cleanQueue, 5*time.Second)
