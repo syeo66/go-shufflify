@@ -70,7 +70,10 @@ func worker(db *sql.DB) {
 	}()
 }
 
+var playedTracks = []string{}
+
 func queueManager(db *sql.DB) {
+
 	users, _ := d.RetrieveActiveUsers(db)
 
 	for _, uid := range users {
@@ -80,9 +83,35 @@ func queueManager(db *sql.DB) {
 			continue
 		}
 
+		player, _ := d.RetrievePlayer(token)
+
+		if player == nil {
+			continue
+		}
+
+		if (!contains(playedTracks, player.Item.Id)) && player.Item.Id != "" {
+			playedTracks = append(playedTracks, player.Item.Id)
+			if len(playedTracks) > 100 {
+				playedTracks = playedTracks[1:]
+			}
+		}
+
 		queue, _ := d.RetrieveQueue(token)
 
-		if queue == nil || queue.Queue == nil || len(queue.Queue) > 3 {
+		if queue == nil || queue.Queue == nil {
+			continue
+		}
+
+		queueList := []Track{}
+
+		// remove played tracks from queue
+		for _, t := range queue.Queue {
+			if !contains(playedTracks, t.Id) {
+				queueList = append(queueList, t)
+			}
+		}
+
+		if len(queueList) > 3 {
 			continue
 		}
 
@@ -132,4 +161,13 @@ func queueManager(db *sql.DB) {
 			fmt.Println(err)
 		}
 	}
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
