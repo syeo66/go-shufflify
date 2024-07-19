@@ -17,10 +17,6 @@ import (
 	. "github.com/syeo66/go-shufflify/types"
 )
 
-// TOOD
-// - allow timeout to be set manually
-// - select playlists to be used
-
 func main() {
 	port := lib.GetEnv("PORT", "3333")
 
@@ -79,6 +75,11 @@ func queueManager(db *sql.DB) {
 
 	for _, uid := range users {
 		token := d.RetrieveToken(uid, db)
+
+		if token == "" {
+			continue
+		}
+
 		queue, _ := d.RetrieveQueue(token)
 
 		if queue == nil || queue.Queue == nil || len(queue.Queue) > 3 {
