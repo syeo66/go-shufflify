@@ -14,7 +14,7 @@ import (
 func RetrievePlayer(token string) (*Player, error) {
 	key := "RetrievePlayer" + token
 
-	cachedPlayer, found := cacheStore.Get(key)
+	cachedPlayer, found := CacheStore.Get(key)
 	if found {
 		return cachedPlayer.(*Player), nil
 	}
@@ -38,7 +38,7 @@ func RetrievePlayer(token string) (*Player, error) {
 		return nil, errors.Join(err, errors.New("error retrieving user"))
 	}
 
-	cacheStore.Set(key, player, 2*time.Second)
+	CacheStore.Set(key, player, 2*time.Second)
 
 	return player, nil
 }

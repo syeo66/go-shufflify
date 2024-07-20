@@ -14,7 +14,7 @@ import (
 func RetrieveQueue(token string) (*Queue, error) {
 	key := "RetrieveQueue" + token
 
-	cachedQueue, found := cacheStore.Get(key)
+	cachedQueue, found := CacheStore.Get(key)
 	if found {
 		return cachedQueue.(*Queue), nil
 	}
@@ -58,7 +58,7 @@ func RetrieveQueue(token string) (*Queue, error) {
 		return nil, errors.Join(err, errors.New("error retrieving queue"))
 	}
 
-	cacheStore.Set(key, cleanQueue, 5*time.Second)
+	CacheStore.Set(key, cleanQueue, 5*time.Second)
 
 	return cleanQueue, nil
 }

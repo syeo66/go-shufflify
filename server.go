@@ -70,10 +70,7 @@ func worker(db *sql.DB) {
 	}()
 }
 
-var playedTracks = []string{}
-
 func queueManager(db *sql.DB) {
-
 	users, _ := d.RetrieveActiveUsers(db)
 
 	for _, uid := range users {
@@ -89,12 +86,8 @@ func queueManager(db *sql.DB) {
 			continue
 		}
 
-		if (!contains(playedTracks, player.Item.Id)) && player.Item.Id != "" {
-			playedTracks = append(playedTracks, player.Item.Id)
-			if len(playedTracks) > 100 {
-				playedTracks = playedTracks[1:]
-			}
-		}
+		cacheKey := "playedTracks" + token + player.Item.Id
+		d.CacheStore.Set(cacheKey, true, 12*time.Hour)
 
 		queue, _ := d.RetrieveQueue(token)
 
@@ -106,7 +99,10 @@ func queueManager(db *sql.DB) {
 
 		// remove played tracks from queue
 		for _, t := range queue.Queue {
-			if !contains(playedTracks, t.Id) {
+			cacheKey := "playedTracks" + token + t.Id
+			_, found := d.CacheStore.Get(cacheKey)
+
+			if !found {
 				queueList = append(queueList, t)
 			}
 		}

@@ -6,4 +6,4 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-var cacheStore = cache.New(5*time.Minute, 10*time.Minute)
+var CacheStore = cache.New(5*time.Minute, 10*time.Minute)
