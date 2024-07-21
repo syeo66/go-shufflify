@@ -74,96 +74,92 @@ func queueManager(db *sql.DB) {
 	users, _ := d.RetrieveActiveUsers(db)
 
 	for _, uid := range users {
-		token := d.RetrieveToken(uid, db)
-
-		if token == "" {
-			continue
-		}
-
-		player, _ := d.RetrievePlayer(token)
-
-		if player == nil {
-			continue
-		}
-
-		cacheKey := "playedTracks" + token + player.Item.Id
-		d.CacheStore.Set(cacheKey, true, 12*time.Hour)
-
-		queue, _ := d.RetrieveQueue(token)
-
-		if queue == nil || queue.Queue == nil {
-			continue
-		}
-
-		queueList := []Track{}
-
-		// remove played tracks from queue
-		for _, t := range queue.Queue {
-			cacheKey := "playedTracks" + token + t.Id
-			_, found := d.CacheStore.Get(cacheKey)
-
-			if !found {
-				queueList = append(queueList, t)
-			}
-		}
-
-		if len(queueList) > 3 {
-			continue
-		}
-
-		favCount := d.RetrieveFavouriteCount(token, db)
-
-		playlists, err := d.RetrievePlaylists(token, db)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		playlistsCount := 0
-		for _, p := range playlists {
-			playlistsCount += p.Tracks.Total
-		}
-
-		totalCount := favCount + playlistsCount
-
-		if totalCount <= 0 {
-			continue
-		}
-
-		n, _ := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
-		num := int(n.Int64())
-		var track Track
-
-		if num < favCount {
-			t, _ := d.RetrieveNthSongFromFavourites(token, num)
-			if t == nil {
-				continue
-			}
-			track = *t
-		} else {
-			num = num - favCount
-			for _, p := range playlists {
-				if num < p.Tracks.Total {
-					t, _ := d.RetrieveNthSongFromPlaylist(token, p, num)
-					track = *t
-					break
-				} else {
-					num = num - p.Tracks.Total
-				}
-			}
-		}
-
-		err = d.AddToQueue(token, track)
-		if err != nil {
-			fmt.Println(err)
-		}
+		processUserQueue(uid, db)
 	}
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
+func processUserQueue(uid string, db *sql.DB) {
+	token := d.RetrieveToken(uid, db)
+
+	if token == "" {
+		return
+	}
+
+	player, _ := d.RetrievePlayer(token)
+
+	if player == nil {
+		return
+	}
+
+	cacheKey := "playedTracks" + token + player.Item.Id
+	d.CacheStore.Set(cacheKey, true, 12*time.Hour)
+
+	queue, _ := d.RetrieveQueue(token)
+
+	if queue == nil || queue.Queue == nil {
+		return
+	}
+
+	queueList := []Track{}
+
+	// remove played tracks from queue
+	for _, t := range queue.Queue {
+		cacheKey := "playedTracks" + token + t.Id
+		_, found := d.CacheStore.Get(cacheKey)
+
+		if !found {
+			queueList = append(queueList, t)
 		}
 	}
-	return false
+
+	if len(queueList) > 3 {
+		return
+	}
+
+	favCount := d.RetrieveFavouriteCount(token, db)
+
+	playlists, err := d.RetrievePlaylists(token, db)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	playlistsCount := 0
+	for _, p := range playlists {
+		playlistsCount += p.Tracks.Total
+	}
+
+	totalCount := favCount + playlistsCount
+
+	if totalCount <= 0 {
+		return
+	}
+
+	n, _ := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
+	num := int(n.Int64())
+	var track Track
+
+	if num < favCount {
+		t, _ := d.RetrieveNthSongFromFavourites(token, num)
+		if t == nil {
+			return
+		}
+		track = *t
+	} else {
+		num = num - favCount
+		for _, p := range playlists {
+			if num < p.Tracks.Total {
+				t, _ := d.RetrieveNthSongFromPlaylist(token, p, num)
+				track = *t
+				break
+			} else {
+				num = num - p.Tracks.Total
+			}
+		}
+	}
+
+	err = d.AddToQueue(token, track)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
