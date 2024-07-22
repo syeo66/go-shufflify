@@ -91,7 +91,7 @@ func processUserQueue(uid string, db *sql.DB) {
 		return
 	}
 
-	cacheKey := "playedTracks" + token + player.Item.Id
+	cacheKey := "playedTracks" + uid + player.Item.Id
 	d.CacheStore.Set(cacheKey, true, 12*time.Hour)
 
 	queue, _ := d.RetrieveQueue(token)
