@@ -104,7 +104,7 @@ func processUserQueue(uid string, db *sql.DB) {
 
 	// remove played tracks from queue
 	for _, t := range queue.Queue {
-		cacheKey := "playedTracks" + token + t.Id
+		cacheKey := "playedTracks" + uid + t.Id
 		_, found := d.CacheStore.Get(cacheKey)
 
 		if !found {
