@@ -13,6 +13,7 @@ COPY routes/ ./routes/
 COPY templates/ ./templates/
 COPY js/ ./js/
 COPY css/ ./css/
+COPY images/ ./images/
 
 RUN CGO_ENABLED=1 GOOS=linux go build -o /server -a -ldflags '-linkmode external -extldflags "-static"' *.go
 
@@ -32,6 +33,7 @@ COPY --from=build-stage /server /server
 COPY --from=build-stage /app/templates /templates
 COPY --from=build-stage /app/js /js
 COPY --from=build-stage /app/css /css
+COPY --from=build-stage /app/images /images
 
 EXPOSE 3333
 

@@ -33,6 +33,9 @@ func main() {
 	jsfs := http.FileServer(http.Dir("./js"))
 	http.Handle("/js/", http.StripPrefix("/js/", jsfs))
 
+	imgfs := http.FileServer(http.Dir("./images"))
+	http.Handle("/images/", http.StripPrefix("/images/", imgfs))
+
 	http.HandleFunc("/", routes.GetRoot(tmpl, db))
 	http.HandleFunc("/callback", routes.GetCallback(db))
 	http.HandleFunc("/login", routes.GetLogin(tmpl))
