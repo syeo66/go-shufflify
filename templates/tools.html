@@ -1,6 +1,6 @@
 {{define "tools"}}
 {{if .}}
-<div id="tools" class="tools" hx-swap-oob="true">
+<div id="tools" class="tools" hx-swap-oob="true" hx-get="/toggle-shuffle" hx-trigger="focus from:window">
   <button {{if .IsActive}}class="primary" {{end}} hx-post="/toggle-shuffle" hx-swap="outerHTML">{{if
     .IsActive}}☑{{else}}☐{{end}} Shuffle</button>
 </div>
