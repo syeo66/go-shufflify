@@ -127,6 +127,10 @@ func processUserQueue(uid string, db *sql.DB) {
 		fmt.Println(err)
 	}
 
+	sort.Slice(playlists, func(i, j int) bool {
+		return playlists[i].Tracks.Total > playlists[j].Tracks.Total
+	})
+
 	playlistsCount := 0
 	for _, p := range playlists {
 		playlistsCount += p.Tracks.Total
@@ -152,10 +156,6 @@ func processUserQueue(uid string, db *sql.DB) {
 		track = *t
 	} else {
 		num = num - favCount
-
-		sort.Slice(playlists, func(i, j int) bool {
-			return playlists[i].Tracks.Total > playlists[j].Tracks.Total
-		})
 
 		for _, p := range playlists {
 			if num < p.Tracks.Total {
