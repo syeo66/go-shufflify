@@ -6,7 +6,7 @@
   accent-color: var(--primary-color);
   color-scheme: light dark;
   font-family: Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
-  font-size-adjust: cx-width from-font;
+  font-size-adjust: ex-height from-font;
   font-weight: 400;
   line-height: 1.5;
 }
