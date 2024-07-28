@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -139,9 +140,11 @@ func processUserQueue(uid string, db *sql.DB) {
 
 	n, _ := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
 	num := int(n.Int64())
+
 	var track Track
 
 	if num < favCount {
+		fmt.Println("Fav")
 		t, _ := d.RetrieveNthSongFromFavourites(token, num)
 		if t == nil {
 			return
@@ -149,8 +152,14 @@ func processUserQueue(uid string, db *sql.DB) {
 		track = *t
 	} else {
 		num = num - favCount
+
+		sort.Slice(playlists, func(i, j int) bool {
+			return playlists[i].Tracks.Total > playlists[j].Tracks.Total
+		})
+
 		for _, p := range playlists {
 			if num < p.Tracks.Total {
+				fmt.Println("playlist")
 				t, _ := d.RetrieveNthSongFromPlaylist(token, p, num)
 				track = *t
 				break
@@ -164,5 +173,4 @@ func processUserQueue(uid string, db *sql.DB) {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }
