@@ -20,7 +20,9 @@
   </div>
 
   <div class="player__progress">
-    <progress value={{.ProgressMs}} max={{.Item.DurationMs}}></progress>
+    <div class="progress">
+      <div style="width: {{percent .ProgressMs .Item.DurationMs}}%;"></div>
+    </div>
   </div>
 </div>
 {{else}}

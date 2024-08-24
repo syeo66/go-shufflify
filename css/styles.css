@@ -100,8 +100,18 @@ header {
 .player__progress {
   grid-area: progress;
 
-  progress {
+  .progress {
     width: 100%;
+    background-color: rgb(from var(--primary-text-color) r g b / 60%);
+    border-radius: 9999px;
+    overflow: hidden;
+
+    >div {
+      background-color: var(--primary-color);
+      height: 0.5rem;
+      transition: width 2s linear;
+      border-radius: 9999px;
+    }
   }
 }
 
