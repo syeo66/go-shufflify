@@ -109,8 +109,6 @@ header {
     >div {
       background-color: var(--primary-color);
       height: 0.5rem;
-      transition: width 2s linear;
-      border-radius: 9999px;
     }
   }
 }

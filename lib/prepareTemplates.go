@@ -11,7 +11,7 @@ func PrepareTemplates() map[string]*template.Template {
 				return 0
 			}
 
-			return float64(current+2000) / float64(maximum) * 100.0
+			return float64(current) / float64(maximum) * 100.0
 		},
 	}
 
