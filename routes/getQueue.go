@@ -27,6 +27,7 @@ func GetQueue(
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		err = tmpl["queue.html"].ExecuteTemplate(w, "queue.html", queue)

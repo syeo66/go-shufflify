@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	. "github.com/syeo66/go-shufflify/types"
@@ -13,6 +14,12 @@ import (
 
 func RetrieveQueue(token string) (*Queue, error) {
 	key := "RetrieveQueue" + token
+
+	_, found := CacheStore.Get(LOCK_KEY)
+
+	if found {
+		return nil, errors.New("request locked")
+	}
 
 	cachedQueue, found := CacheStore.Get(key)
 	if found {
@@ -29,6 +36,16 @@ func RetrieveQueue(token string) (*Queue, error) {
 		return nil, errors.Join(err, errors.New("error retrieving queue"))
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 429 {
+		retryAfter := resp.Header.Get("Retry-After")
+		r, err := strconv.Atoi(retryAfter)
+		if err == nil {
+			fmt.Printf("Retry-After: %s\n", retryAfter)
+			CacheStore.Set(LOCK_KEY, "true", time.Duration(r)*time.Second)
+		}
+		return nil, errors.New("Throttle")
+	}
 
 	queue := &Queue{}
 	body, _ := io.ReadAll(resp.Body)

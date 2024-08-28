@@ -20,7 +20,11 @@ func GetPlayer(tmpl map[string]*template.Template, db *sql.DB) func(http.Respons
 		}
 
 		token := d.RetrieveToken(user.Id, db)
-		player, _ := d.RetrievePlayer(token)
+		player, err := d.RetrievePlayer(token)
+
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		err = tmpl["player.html"].ExecuteTemplate(w, "player.html", player)
 		if err != nil {
