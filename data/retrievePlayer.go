@@ -51,8 +51,6 @@ func RetrievePlayer(token string) (*Player, error) {
 
 	player := &Player{}
 
-	fmt.Printf("%+v\n", resp)
-
 	body, _ := io.ReadAll(resp.Body)
 	err = json.Unmarshal(body, player)
 
