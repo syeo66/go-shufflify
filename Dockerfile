@@ -10,7 +10,6 @@ COPY data/ ./data/
 COPY lib/ ./lib/
 COPY types/ ./types/
 COPY routes/ ./routes/
-COPY templates/ ./templates/
 COPY js/ ./js/
 COPY css/ ./css/
 COPY images/ ./images/
@@ -30,7 +29,6 @@ RUN apk --no-cache add --no-check-certificate ca-certificates \
   && update-ca-certificates
 
 COPY --from=build-stage /server /server
-COPY --from=build-stage /app/templates /templates
 
 EXPOSE 3333
 
