@@ -31,9 +31,6 @@ RUN apk --no-cache add --no-check-certificate ca-certificates \
 
 COPY --from=build-stage /server /server
 COPY --from=build-stage /app/templates /templates
-COPY --from=build-stage /app/js /js
-COPY --from=build-stage /app/css /css
-COPY --from=build-stage /app/images /images
 
 EXPOSE 3333
 
