@@ -1,4 +1,4 @@
-FROM golang:1.22 AS build-stage
+FROM golang:1.23 AS build-stage
 
 WORKDIR /app
 
@@ -10,7 +10,6 @@ COPY data/ ./data/
 COPY lib/ ./lib/
 COPY types/ ./types/
 COPY routes/ ./routes/
-COPY templates/ ./templates/
 COPY js/ ./js/
 COPY css/ ./css/
 COPY images/ ./images/
@@ -30,10 +29,6 @@ RUN apk --no-cache add --no-check-certificate ca-certificates \
   && update-ca-certificates
 
 COPY --from=build-stage /server /server
-COPY --from=build-stage /app/templates /templates
-COPY --from=build-stage /app/js /js
-COPY --from=build-stage /app/css /css
-COPY --from=build-stage /app/images /images
 
 EXPOSE 3333
 

@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"database/sql"
+	"embed"
 	"errors"
 	"fmt"
 	"math/big"
@@ -18,6 +19,15 @@ import (
 	. "github.com/syeo66/go-shufflify/types"
 )
 
+//go:embed css/*
+var css embed.FS
+
+//go:embed js/*
+var js embed.FS
+
+//go:embed images/*
+var images embed.FS
+
 func main() {
 	port := lib.GetEnv("PORT", "3333")
 
@@ -28,14 +38,14 @@ func main() {
 
 	tmpl := lib.PrepareTemplates()
 
-	cssfs := http.FileServer(http.Dir("./css"))
-	http.Handle("/css/", http.StripPrefix("/css/", cssfs))
+	cssfs := http.FileServer(http.FS(css))
+	http.Handle("/css/", cssfs)
 
-	jsfs := http.FileServer(http.Dir("./js"))
-	http.Handle("/js/", http.StripPrefix("/js/", jsfs))
+	jsfs := http.FileServer(http.FS(js))
+	http.Handle("/js/", jsfs)
 
-	imgfs := http.FileServer(http.Dir("./images"))
-	http.Handle("/images/", http.StripPrefix("/images/", imgfs))
+	imgfs := http.FileServer(http.FS(images))
+	http.Handle("/images/", imgfs)
 
 	http.HandleFunc("/", routes.GetRoot(tmpl, db))
 	http.HandleFunc("/callback", routes.GetCallback(db))
