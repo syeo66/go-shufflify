@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	d "github.com/syeo66/go-shufflify/data"
-	. "github.com/syeo66/go-shufflify/types"
+	types "github.com/syeo66/go-shufflify/types"
 )
 
 func GetRoot(
@@ -22,7 +22,7 @@ func GetRoot(
 			return
 		}
 
-		page := Page{}
+		page := types.Page{}
 
 		user, err := d.RetrieveSessionUser(r)
 		if err != nil {

@@ -16,7 +16,7 @@ import (
 	d "github.com/syeo66/go-shufflify/data"
 	"github.com/syeo66/go-shufflify/lib"
 	"github.com/syeo66/go-shufflify/routes"
-	. "github.com/syeo66/go-shufflify/types"
+	types "github.com/syeo66/go-shufflify/types"
 )
 
 //go:embed css/*
@@ -114,7 +114,7 @@ func processUserQueue(uid string, db *sql.DB) {
 		return
 	}
 
-	queueList := []Track{}
+	queueList := []types.Track{}
 
 	// remove played tracks from queue
 	for _, t := range queue.Queue {
@@ -155,7 +155,7 @@ func processUserQueue(uid string, db *sql.DB) {
 	n, _ := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
 	num := int(n.Int64())
 
-	var track Track
+	var track types.Track
 
 	if num < favCount {
 		fmt.Println("Fav")

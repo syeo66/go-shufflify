@@ -15,7 +15,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	d "github.com/syeo66/go-shufflify/data"
 	"github.com/syeo66/go-shufflify/lib"
-	. "github.com/syeo66/go-shufflify/types"
+	types "github.com/syeo66/go-shufflify/types"
 )
 
 func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
@@ -68,7 +68,7 @@ func GetCallback(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 
 		if resp.StatusCode == 200 {
 			body, _ := io.ReadAll(resp.Body)
-			bodyData := &AccessToken{}
+			bodyData := &types.AccessToken{}
 			err = json.Unmarshal(body, bodyData)
 
 			if err != nil {
