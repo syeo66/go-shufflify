@@ -22,9 +22,14 @@ func GetQueue(
 			return
 		}
 
-		token := d.RetrieveToken(user.Id, db)
-		queue, err := d.RetrieveQueue(token)
+		token, err := d.RetrieveToken(user.Id, db)
+		if err != nil {
+			fmt.Printf("Error retrieving token: %v\n", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
 
+		queue, err := d.RetrieveQueue(token)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

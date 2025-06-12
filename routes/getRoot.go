@@ -30,17 +30,25 @@ func GetRoot(
 			return
 		}
 		page.User = *user
-		token := d.RetrieveToken(user.Id, db)
-
-		queue, err := d.RetrieveQueue(token)
-		if err == nil && queue != nil {
-			page.Queue = *queue
+		token, err := d.RetrieveToken(user.Id, db)
+		if err != nil {
+			fmt.Printf("Error retrieving token: %v\n", err)
+			// Continue with empty page data rather than failing
 		} else {
-			fmt.Println(err)
-		}
+			queue, err := d.RetrieveQueue(token)
+			if err == nil && queue != nil {
+				page.Queue = *queue
+			} else if err != nil {
+				fmt.Printf("Error retrieving queue: %v\n", err)
+			}
 
-		player, _ := d.RetrievePlayer(token)
-		page.Player = player
+			player, err := d.RetrievePlayer(token)
+			if err != nil {
+				fmt.Printf("Error retrieving player: %v\n", err)
+			} else {
+				page.Player = player
+			}
+		}
 
 		configuration, err := d.RetrieveConfig(user.Id, db)
 		if err != nil {

@@ -2,14 +2,15 @@ package data
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 )
 
-func RetrieveToken(uid string, db *sql.DB) string {
+func RetrieveToken(uid string, db *sql.DB) (string, error) {
 	stmt, err := db.Prepare("select token, refreshToken, expiry from users where id = ?")
 	if err != nil {
-		return ""
+		return "", errors.Join(err, errors.New("error preparing token query"))
 	}
 	defer stmt.Close()
 
@@ -17,8 +18,7 @@ func RetrieveToken(uid string, db *sql.DB) string {
 	var expiry time.Time
 	err = stmt.QueryRow(uid).Scan(&token, &refreshToken, &expiry)
 	if err != nil {
-		fmt.Println(err)
-		return ""
+		return "", errors.Join(err, fmt.Errorf("error retrieving token for user %s", uid))
 	}
 
 	if expiry.Add(-5 * time.Minute).Before(time.Now()) {
@@ -26,10 +26,9 @@ func RetrieveToken(uid string, db *sql.DB) string {
 
 		token, err = RefreshToken(uid, refreshToken, db)
 		if err != nil {
-			fmt.Println(err)
-			return ""
+			return "", fmt.Errorf("error refreshing token for user %s: %w", uid, err)
 		}
 	}
 
-	return token
+	return token, nil
 }

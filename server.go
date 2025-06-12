@@ -85,33 +85,45 @@ func worker(db *sql.DB) {
 }
 
 func queueManager(db *sql.DB) {
-	users, _ := d.RetrieveActiveUsers(db)
+	users, err := d.RetrieveActiveUsers(db)
+	if err != nil {
+		fmt.Printf("Error retrieving active users: %v\n", err)
+		return
+	}
 
 	for _, uid := range users {
-		processUserQueue(uid, db)
+		if err := processUserQueue(uid, db); err != nil {
+			fmt.Printf("Error processing queue for user %s: %v\n", uid, err)
+		}
 	}
 }
 
-func processUserQueue(uid string, db *sql.DB) {
-	token := d.RetrieveToken(uid, db)
-
+func processUserQueue(uid string, db *sql.DB) error {
+	token, err := d.RetrieveToken(uid, db)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve token for user %s: %w", uid, err)
+	}
 	if token == "" {
-		return
+		return fmt.Errorf("received empty token for user %s", uid)
 	}
 
-	player, _ := d.RetrievePlayer(token)
-
+	player, err := d.RetrievePlayer(token)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve player for user %s: %w", uid, err)
+	}
 	if player == nil {
-		return
+		return fmt.Errorf("no active player found for user %s", uid)
 	}
 
 	cacheKey := "playedTracks" + uid + player.Item.Id
 	d.CacheStore.Set(cacheKey, true, 12*time.Hour)
 
-	queue, _ := d.RetrieveQueue(token)
-
+	queue, err := d.RetrieveQueue(token)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve queue for user %s: %w", uid, err)
+	}
 	if queue == nil || queue.Queue == nil {
-		return
+		return fmt.Errorf("no queue found for user %s", uid)
 	}
 
 	queueList := []types.Track{}
@@ -127,10 +139,13 @@ func processUserQueue(uid string, db *sql.DB) {
 	}
 
 	if len(queueList) > 3 {
-		return
+		return nil // Queue has enough songs, nothing to do
 	}
 
-	favCount := d.RetrieveFavouriteCount(token, db)
+	favCount, err := d.RetrieveFavouriteCount(token, db)
+	if err != nil {
+		return fmt.Errorf("failed to retrieve favourite count for user %s: %w", uid, err)
+	}
 
 	playlists, err := d.RetrievePlaylists(token, db)
 	if err != nil {
@@ -149,19 +164,25 @@ func processUserQueue(uid string, db *sql.DB) {
 	totalCount := favCount + playlistsCount
 
 	if totalCount <= 0 {
-		return
+		return fmt.Errorf("user %s has no tracks available (favourites: %d, playlists: %d)", uid, favCount, playlistsCount)
 	}
 
-	n, _ := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
+	n, err := rand.Int(rand.Reader, big.NewInt(int64(totalCount)))
+	if err != nil {
+		return fmt.Errorf("failed to generate random number for user %s: %w", uid, err)
+	}
 	num := int(n.Int64())
 
 	var track types.Track
 
 	if num < favCount {
 		fmt.Println("Fav")
-		t, _ := d.RetrieveNthSongFromFavourites(token, num)
+		t, err := d.RetrieveNthSongFromFavourites(token, num)
+		if err != nil {
+			return fmt.Errorf("failed to retrieve favourite song %d for user %s: %w", num, uid, err)
+		}
 		if t == nil {
-			return
+			return fmt.Errorf("no favourite song found at position %d for user %s", num, uid)
 		}
 		track = *t
 	} else {
@@ -170,7 +191,13 @@ func processUserQueue(uid string, db *sql.DB) {
 		for _, p := range playlists {
 			if num < p.Tracks.Total {
 				fmt.Println("playlist")
-				t, _ := d.RetrieveNthSongFromPlaylist(token, p, num)
+				t, err := d.RetrieveNthSongFromPlaylist(token, p, num)
+			if err != nil {
+				return fmt.Errorf("failed to retrieve song %d from playlist %s for user %s: %w", num, p.Name, uid, err)
+			}
+			if t == nil {
+				return fmt.Errorf("no song found at position %d in playlist %s for user %s", num, p.Name, uid)
+			}
 				track = *t
 				break
 			} else {
@@ -181,6 +208,8 @@ func processUserQueue(uid string, db *sql.DB) {
 
 	err = d.AddToQueue(token, track)
 	if err != nil {
-		fmt.Println(err)
+		return fmt.Errorf("failed to add track %s to queue for user %s: %w", track.Name, uid, err)
 	}
+
+	return nil
 }

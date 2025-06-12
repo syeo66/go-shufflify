@@ -19,11 +19,16 @@ func GetPlayer(tmpl map[string]*template.Template, db *sql.DB) func(http.Respons
 			return
 		}
 
-		token := d.RetrieveToken(user.Id, db)
-		player, err := d.RetrievePlayer(token)
-
+		token, err := d.RetrieveToken(user.Id, db)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("Error retrieving token: %v\n", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		player, err := d.RetrievePlayer(token)
+		if err != nil {
+			fmt.Printf("Error retrieving player: %v\n", err)
 		}
 
 		err = tmpl["player.html"].ExecuteTemplate(w, "player.html", player)

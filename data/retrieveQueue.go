@@ -47,6 +47,10 @@ func RetrieveQueue(token string) (*Queue, error) {
 		return nil, errors.New("Throttle")
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("Spotify API returned status %d when retrieving queue", resp.StatusCode)
+	}
+
 	queue := &Queue{}
 	body, _ := io.ReadAll(resp.Body)
 	err = json.Unmarshal(body, queue)
